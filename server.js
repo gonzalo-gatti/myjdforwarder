@@ -19,17 +19,18 @@ const server = http.createServer((req, res) => {
             const params = new URLSearchParams(body);
             const curlDataArgs = [];
             for (const [key, value] of params) {
-                curlDataArgs.push(`--data "${key}=${value}"`);
+                curlDataArgs.push(`--data-urlencode "${key}=${value}"`);
             }
 
             const curlCommand = `curl ${curlDataArgs.join(' ')} http://127.0.0.1:9666/flash/addcrypted2`;
-            const sshCommand = `sshpass -p "${SSH_PASS}" ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "${curlCommand}"`;
+            const escapedCurlCommand = curlCommand.replace(/'/g, `'\\''`);
+            const sshCommand = `sshpass -p "${SSH_PASS}" ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} '${escapedCurlCommand}'`;
 
             exec(sshCommand, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`Error: ${error.message}`);
                     res.statusCode = 500;
-                    res.end('Error');
+                    res.end(`Error: ${error.message}\nStderr: ${stderr}`);
                     return;
                 }
                 if (stderr) {
