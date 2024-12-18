@@ -31,11 +31,11 @@ These variables can be set when running the Docker container.
 Clone this repository and build the Docker image:
 
 ```
-docker run -d -p 9666:9666 -e SSH_USER="youruser" -e SSH_HOST="yourserver.com" -e SSH_PASS="yourpassword" jd-forwarder --name "MyJDForwarder"
+docker build -t jd-forwarder .
 ```
 
 Run the container, passing your SSH credentials as environment variables:At this point, any request that tries to access http://127.0.0.1:9666/flash/addcrypted2 on your local machine will be forwarded to the remote server over SSH, executing the curl command there and adding the links to JDownloader.
 
 ```
-docker build -t jd-forwarder .
+docker run -d -p 9666:9666 -e SSH_USER="youruser" -e SSH_HOST="yourserver.com" -e SSH_PASS="yourpassword" jd-forwarder --name "MyJDForwarder"
 ```
